@@ -21,11 +21,11 @@ class SC_Gateway_Twitter
 	
 	static function init()
 	{
-		add_action('admin_init', 						array('SC_Gateway_Twitter', 'register_settings') );
-		add_action('social_connect_button_list',		array('SC_Gateway_Twitter','render_button'));
+		add_action('admin_init',                        array('SC_Gateway_Twitter', 'register_settings') );
+		add_action('social_connect_button_list',        array('SC_Gateway_Twitter','render_button'));
 		
 		add_filter('social_connect_enable_options_page', create_function('$bool','return true;'));
-		add_action('social_connect_options',			array('SC_Gateway_Twitter', 'render_options') );
+		add_action('social_connect_options',            array('SC_Gateway_Twitter', 'render_options') );
 	}
 	
 	static function call()
@@ -96,9 +96,9 @@ class SC_Gateway_Twitter
 	
 	static function connect()
 	{
-		$twitter_enabled 	= get_option('social_connect_twitter_enabled');
-		$consumer_key 		= get_option('social_connect_twitter_consumer_key');
-		$consumer_secret 	= get_option('social_connect_twitter_consumer_secret');
+		$twitter_enabled    = get_option('social_connect_twitter_enabled');
+		$consumer_key       = get_option('social_connect_twitter_consumer_key');
+		$consumer_secret    = get_option('social_connect_twitter_consumer_secret');
 		
 		if ($twitter_enabled && $consumer_key && $consumer_secret)
 		{
@@ -112,19 +112,19 @@ class SC_Gateway_Twitter
 	
 	static function callback()
 	{
-		$consumer_key 		= get_option('social_connect_twitter_consumer_key');
-		$consumer_secret 	= get_option('social_connect_twitter_consumer_secret');
-		$twitter_api 		= new EpiTwitter($consumer_key, $consumer_secret);
+		$consumer_key       = get_option('social_connect_twitter_consumer_key');
+		$consumer_secret    = get_option('social_connect_twitter_consumer_secret');
+		$twitter_api        = new EpiTwitter($consumer_key, $consumer_secret);
 		
 		$twitter_api->setToken($_GET['oauth_token']);
 		$token = $twitter_api->getAccessToken();
 		$twitter_api->setToken($token->oauth_token, $token->oauth_token_secret);
 		
-		$user 			= $twitter_api->get_accountVerify_credentials();
-		$name 			= $user->name;
-		$screen_name 	= $user->screen_name;
-		$twitter_id 	= $user->id;
-		$signature 		= SC_Utils::generate_signature($twitter_id);
+		$user           = $twitter_api->get_accountVerify_credentials();
+		$name           = $user->name;
+		$screen_name    = $user->screen_name;
+		$twitter_id     = $user->id;
+		$signature      = SC_Utils::generate_signature($twitter_id);
 		
 		?>
 		
@@ -154,23 +154,23 @@ class SC_Gateway_Twitter
 	
 	static function process_login()
 	{
-		$redirect_to 			= SC_Utils::redirect_to();
-		$provider_identity 		= $_REQUEST[ 'social_connect_twitter_identity' ];
-		$provided_signature 	= $_REQUEST[ 'social_connect_signature' ];
+		$redirect_to            = SC_Utils::redirect_to();
+		$provider_identity      = $_REQUEST[ 'social_connect_twitter_identity' ];
+		$provided_signature     = $_REQUEST[ 'social_connect_signature' ];
 		
 		SC_Utils::verify_signature( $provider_identity, $provided_signature, $redirect_to );
 		
-		$site_url 	= parse_url( site_url() );
-		$names 		= explode(" ", $sc_name );
+		$site_url   = parse_url( site_url() );
+		$names      = explode(" ", $sc_name );
 		
 		return (object) array(
 			'provider_identity' => $provider_identity,
-			'email' 			=> 'tw_' . md5( $provider_identity ) . '@' . $site_url['host'],
-			'first_name' 		=> $names[0],
-			'last_name' 		=> $names[1],
-			'profile_url'		=> '',
-			'name' 				=> $_REQUEST[ 'social_connect_name' ],
-			'user_login' 		=> $_REQUEST[ 'social_connect_screen_name' ]
+			'email'             => 'tw_' . md5( $provider_identity ) . '@' . $site_url['host'],
+			'first_name'         => $names[0],
+			'last_name'         => $names[1],
+			'profile_url'        => '',
+			'name'              => $_REQUEST[ 'social_connect_name' ],
+			'user_login'        => $_REQUEST[ 'social_connect_screen_name' ]
 		);
 	}
 	
