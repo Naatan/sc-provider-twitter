@@ -166,9 +166,9 @@ class SC_Gateway_Twitter
 		return (object) array(
 			'provider_identity' => $provider_identity,
 			'email'             => 'tw_' . md5( $provider_identity ) . '@' . $site_url['host'],
-			'first_name'         => $names[0],
+			'first_name'        => $names[0],
 			'last_name'         => $names[1],
-			'profile_url'        => '',
+			'profile_url'       => '',
 			'name'              => $_REQUEST[ 'social_connect_name' ],
 			'user_login'        => $_REQUEST[ 'social_connect_screen_name' ]
 		);
