@@ -14,11 +14,17 @@ require_once(dirname(__FILE__) . '/EpiCurl.php' );
 require_once(dirname(__FILE__) . '/EpiOAuth.php' );
 require_once(dirname(__FILE__) . '/EpiTwitter.php' );
 
+/**
+ * Social Connect Twitter provider
+ */
 class SC_Provider_Twitter
 {
 	
-	protected static $calls = array('connect','callback');
-	
+	/**
+	 * Init, static class constructor
+	 * 
+	 * @returns	void 
+	 */
 	static function init()
 	{
 		add_action('admin_init',                        array('SC_Provider_Twitter', 'register_settings') );
@@ -28,6 +34,11 @@ class SC_Provider_Twitter
 		add_action('social_connect_options',            array('SC_Provider_Twitter', 'render_options') );
 	}
 	
+	/**
+	 * When a callback is made, it will be tunneled through this method
+	 * 
+	 * @returns	void							
+	 */
 	static function call()
 	{
 		if ( !isset($_GET['call']) OR !in_array($_GET['call'], array('connect','callback')))
@@ -38,12 +49,22 @@ class SC_Provider_Twitter
 		call_user_func(array('SC_Provider_Twitter', $_GET['call']));
 	}
 	
+	/**
+	 * Register settings used by this plugin
+	 *  
+	 * @returns	void							
+	 */
 	static function register_settings()
 	{
 		register_setting( 'social-connect-settings-group', 'social_connect_twitter_consumer_key' );
 		register_setting( 'social-connect-settings-group', 'social_connect_twitter_consumer_secret' );
 	}
 	
+	/**
+	 * Render provider options, embedded on the SC options page
+	 * 
+	 * @returns	void							
+	 */
 	static function render_options()
 	{
 		?>
@@ -69,6 +90,11 @@ class SC_Provider_Twitter
 		<?php
 	}
 	
+	/**
+	 * Render connect button and related javascript
+	 * 
+	 * @returns	void							
+	 */
 	static function render_button()
 	{
 		$image_url = plugins_url() . '/' . basename( dirname( __FILE__ )) . '/button.png';
@@ -94,6 +120,11 @@ class SC_Provider_Twitter
 		<?php
 	}
 	
+	/**
+	 * Initiate authentication, redirects to provider auth page
+	 * 
+	 * @returns	void							
+	 */
 	static function connect()
 	{
 		$twitter_enabled    = get_option('social_connect_twitter_enabled');
@@ -110,6 +141,11 @@ class SC_Provider_Twitter
 		echo '<p>Social Connect plugin has not been configured for Twitter</p>';
 	}
 	
+	/**
+	 * Provider authentication callback, called when the provider has done it's part
+	 * 
+	 * @returns	void							
+	 */
 	static function callback()
 	{
 		$consumer_key       = get_option('social_connect_twitter_consumer_key');
@@ -152,6 +188,11 @@ class SC_Provider_Twitter
 
 	}
 	
+	/**
+	 * Process the login, validates the provider's data and returns required information
+	 * 
+	 * @returns	object							
+	 */
 	static function process_login()
 	{
 		$redirect_to            = SC_Utils::redirect_to();
