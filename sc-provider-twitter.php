@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: Social Connect - Twitter Gateway
+Plugin Name: Social Connect - Twitter Provider
 Plugin URI: http://wordpress.org/extend/plugins/social-connect/
 Description: Allows you to login / register with Twitter - REQUIRES Social Connect plugin
 Version: 0.10
@@ -14,18 +14,18 @@ require_once(dirname(__FILE__) . '/EpiCurl.php' );
 require_once(dirname(__FILE__) . '/EpiOAuth.php' );
 require_once(dirname(__FILE__) . '/EpiTwitter.php' );
 
-class SC_Gateway_Twitter
+class SC_Provider_Twitter
 {
 	
 	protected static $calls = array('connect','callback');
 	
 	static function init()
 	{
-		add_action('admin_init',                        array('SC_Gateway_Twitter', 'register_settings') );
-		add_action('social_connect_button_list',        array('SC_Gateway_Twitter','render_button'));
+		add_action('admin_init',                        array('SC_Provider_Twitter', 'register_settings') );
+		add_action('social_connect_button_list',        array('SC_Provider_Twitter','render_button'));
 		
 		add_filter('social_connect_enable_options_page', create_function('$bool','return true;'));
-		add_action('social_connect_options',            array('SC_Gateway_Twitter', 'render_options') );
+		add_action('social_connect_options',            array('SC_Provider_Twitter', 'render_options') );
 	}
 	
 	static function call()
@@ -35,7 +35,7 @@ class SC_Gateway_Twitter
 			return;
 		}
 		
-		call_user_func(array('SC_Gateway_Twitter', $_GET['call']));
+		call_user_func(array('SC_Provider_Twitter', $_GET['call']));
 	}
 	
 	static function register_settings()
@@ -53,7 +53,7 @@ class SC_Gateway_Twitter
 		<p><?php printf(__('Need to register? <a href="%1$s">Register an Application</a> and fill the form with the details below:', 'social_connect'), 'http://dev.twitter.com/apps/new'); ?>
 		<ol>
 			<li><?php _e('Application Type: <strong>Browser</strong>', 'social_connect'); ?></li>
-			<li><?php printf(__('Callback URL: <strong>%1$s</strong>', 'social_connect'), SOCIAL_CONNECT_PLUGIN_URL . '/call.php?call=callback&gateway=twitter'); ?></li>
+			<li><?php printf(__('Callback URL: <strong>%1$s</strong>', 'social_connect'), SOCIAL_CONNECT_PLUGIN_URL . '/call.php?call=callback&provider=twitter'); ?></li>
 			<li><?php _e('Default Access: <strong>Read &amp; Write</strong>', 'social_connect'); ?></li>
 		</ol>
 		<table class="form-table">
@@ -75,7 +75,7 @@ class SC_Gateway_Twitter
 		?>
 		<a href="javascript:void(0);" title="Twitter" class="social_connect_login_twitter"><img alt="Twitter" src="<?php echo $image_url ?>" /></a>
 		<div id="social_connect_twitter_auth" style="display: none;">
-			<input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/call.php?call=connect&gateway=twitter' ); ?>" />
+			<input type="hidden" name="redirect_uri" value="<?php echo( SOCIAL_CONNECT_PLUGIN_URL . '/call.php?call=connect&provider=twitter' ); ?>" />
 		</div>
 		
 		<script type="text/javascript">
@@ -168,7 +168,7 @@ class SC_Gateway_Twitter
 			'email'             => 'tw_' . md5( $provider_identity ) . '@' . $site_url['host'],
 			'first_name'        => $names[0],
 			'last_name'         => $names[1],
-			'profile_url'       => '',
+			'profile_url'       => 'http://twitter.com/' . urlencode($_REQUEST[ 'social_connect_screen_name' ]),
 			'name'              => $_REQUEST[ 'social_connect_name' ],
 			'user_login'        => $_REQUEST[ 'social_connect_screen_name' ]
 		);
@@ -176,4 +176,4 @@ class SC_Gateway_Twitter
 	
 }
 
-SC_Gateway_Twitter::init();
+SC_Provider_Twitter::init();
